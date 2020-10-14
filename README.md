@@ -1,16 +1,16 @@
-# Title: SQL Practice - Intermediate Adventureworks Queries
+# Title: MySQLi Assignment - To-Do List
 
-## Purpose: To practice intermediate mySQL queries using phpMyAdmin
+## Purpose: To create a To-Do list in PHP using MySQL
 
-## Due: October 14, 2020
+## Due: October 19, 2020
 
 ## Author: Krisztina Pap
 
-## Last Edited: October 13, 2020
+## Last Edited: October 19, 2020
 
 ## Resources:
-- Tammy Valgardson: TECHCareers Lesson Notes from October 8-13, 2020
+- Tammy Valgardson: TECHCareers Lesson Notes from October 8-15, 2020
 
 
 ## Trello Board:
-https://trello.com/b/md7HrQgv/sql-practice-intermediate-adventureworks-queries
+https://trello.com/b/b2vWkcvO/mysqli-assignment-to-do-list
