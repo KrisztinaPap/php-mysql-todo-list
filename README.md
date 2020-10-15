@@ -1,5 +1,7 @@
 # Title: MySQLi Assignment - To-Do List
 
+## Database: `todo_dbs`
+
 ## Purpose: To create a To-Do list in PHP using MySQL
 
 ## Due: October 19, 2020
