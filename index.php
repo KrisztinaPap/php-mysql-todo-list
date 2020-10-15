@@ -1,12 +1,20 @@
 <?php
     require 'constants.php';
 
-    $tasks = null;
+    $todo_tasks = null;
+    $overdue_tasks = null;
+    $completed_tasks = null;
+    // Variables for new tasks section
     $new_task = null;
-    $due_date = null;
-    $category = null;
+    $new_due_date = null;
+    $new_category = null;
 
-    $sql_tasks = "SELECT TaskName, DueDate, StatusDescription, CategoryDescription FROM Task INNER JOIN Status USING(StatusID) INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE ActiveID = 1";
+    // Variables for Task lists
+    $category = null;
+    $task_name = null;
+    $due_date = null;
+
+    $sql_todo_tasks = "SELECT TaskName, DueDate, StatusDescription, CategoryDescription FROM Task INNER JOIN Status USING(StatusID) INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE ActiveID = 1 AND StatusID = 1";
 
     $connection = new MySQLi(HOST, USER, PASSWORD, DATABASE);
 
@@ -14,21 +22,27 @@
         die('Connection failed: '.$connection->connect_error);
     }
 
-    $tasks_result = $connection->query($sql_tasks);
+    $todo_task_result = $connection->query($sql_todo_tasks);
 
-    if( !$tasks_result ) {
+    if( !$todo_task_result ) {
         exit("Something went wrong with the fetch");
     } 
-    if( 0 === $tasks_result->num_rows ) {
+    if( 0 === $todo_task_result->num_rows ) {
         $tasks = "You have no active tasks";
     }
-    if( $tasks_result->num_rows > 0 ) {
-        while( $task = $tasks_result->fetch_assoc() ) {
-            $tasks .= sprintf('
-            <li>%s</li>
+    if( $todo_task_result->num_rows > 0 ) {
+        while( $task = $todo_task_result->fetch_assoc() ) {
+            $todo_tasks .= sprintf('
+            <tr>
+                <td>%s</td>
+                <td>%s</td>
+                <td>%s</td>
+            </tr>
             ',
-            $task['TaskName']
-            );
+            $task['CategoryDescription'],
+            $task['TaskName'],
+            $task['DueDate']
+            );       
         }
     }
     
@@ -74,7 +88,9 @@
     </form>
     <section>
         <h2>Things to do</h2>
-        <ul><?php echo $tasks; ?></ul>
+        <table>
+            <?php echo $todo_tasks; ?>
+        </table>
     </section>
     <section>
         <h2>Overdue</h2>
