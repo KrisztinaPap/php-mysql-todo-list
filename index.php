@@ -14,7 +14,12 @@
     $task_name = null;
     $due_date = null;
 
+    // SQL query variables for each status (for each todo list: todo, overdue, and completed)
     $sql_todo_tasks = "SELECT TaskName, DueDate, StatusDescription, CategoryDescription FROM Task INNER JOIN Status USING(StatusID) INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE ActiveID = 1 AND StatusID = 1";
+
+    $sql_overdue_tasks = "SELECT TaskName, DueDate, StatusDescription, CategoryDescription FROM Task INNER JOIN Status USING(StatusID) INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE ActiveID = 1 AND StatusID = 2";
+
+    $sql_completed_tasks = "SELECT TaskName, DueDate, StatusDescription, CategoryDescription FROM Task INNER JOIN Status USING(StatusID) INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE ActiveID = 1 AND StatusID = 3";
 
     $connection = new MySQLi(HOST, USER, PASSWORD, DATABASE);
 
@@ -22,6 +27,7 @@
         die('Connection failed: '.$connection->connect_error);
     }
 
+    // Fetching todo tasks
     $todo_task_result = $connection->query($sql_todo_tasks);
 
     if( !$todo_task_result ) {
@@ -45,7 +51,56 @@
             );       
         }
     }
+
+    // Fetching overdue tasks
+    $overdue_task_result = $connection->query($sql_overdue_tasks);
+
+    if( !$overdue_task_result ) {
+        exit("Something went wrong with the fetch");
+    } 
+    if( 0 === $overdue_task_result->num_rows ) {
+        $overdue_tasks = "You have no active tasks";
+    }
+    if( $overdue_task_result->num_rows > 0 ) {
+        while( $task = $overdue_task_result->fetch_assoc() ) {
+            $overdue_tasks .= sprintf('
+            <tr>
+                <td>%s</td>
+                <td>%s</td>
+                <td>%s</td>
+            </tr>
+            ',
+            $task['CategoryDescription'],
+            $task['TaskName'],
+            $task['DueDate']
+            );       
+        }
+    }
     
+    // Fetching completed tasks
+    $completed_task_result = $connection->query($sql_completed_tasks);
+
+    if( !$completed_task_result ) {
+        exit("Something went wrong with the fetch");
+    } 
+    if( 0 === $completed_task_result->num_rows ) {
+        $completed_tasks = "You have no active tasks";
+    }
+    if( $completed_task_result->num_rows > 0 ) {
+        while( $task = $completed_task_result->fetch_assoc() ) {
+            $completed_tasks .= sprintf('
+            <tr>
+                <td>%s</td>
+                <td>%s</td>
+                <td>%s</td>
+            </tr>
+            ',
+            $task['CategoryDescription'],
+            $task['TaskName'],
+            $task['DueDate']
+            );       
+        }
+    }
 
     $connection->close();
 ?>
@@ -94,9 +149,15 @@
     </section>
     <section>
         <h2>Overdue</h2>
+        <table>
+            <?php echo $overdue_tasks; ?>
+        </table>
     </section>
     <section>
         <h2>Completed</h2>
+        <table>
+            <?php echo $completed_tasks; ?>
+        </table>
     </section>
     <?php
         include './templates/footer.php';
