@@ -61,3 +61,11 @@ VALUES
 
 
 -- SELECT TaskName, DueDate, StatusDescription, CategoryDescription FROM Task INNER JOIN Status USING(StatusID) INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE ActiveID = 1; 
+
+/* INSERT INTO Task (TaskID, StatusID, CategoryID, ActiveID, TaskName, DueDate, CompletedDate)
+VALUES
+(NULL, 1, 2, 1, 'Math homework', NULL, NULL),
+(NULL, 1, 2, 1, 'Write code', NULL, NULL),
+(NULL, 1, 1, 1, 'Exercise', NULL, NULL),
+(NULL, 1, 1, 1, 'Read to the kids', NULL, NULL),
+(NULL, 1, 1, 2, 'Do dishes', NULL, NULL); */
