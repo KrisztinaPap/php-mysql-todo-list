@@ -1,30 +1,48 @@
 <?php
     require 'constants.php';
 
+    // For the Task Categories dropdown
+    $task_category_options = null;
+    $sql_task_categories = "SELECT CategoryID, CategoryDescription FROM Category";
+
+    // Variables for the 3 different task lists (todo(active), overdue, and completed)
     $todo_tasks = null;
     $overdue_tasks = null;
     $completed_tasks = null;
-    // Variables for new tasks section
-    $new_task = null;
-    $new_due_date = null;
-    $new_category = null;
-
-    // Variables for Task lists
-    $category = null;
-    $task_name = null;
-    $due_date = null;
+    $message = null;
 
     // SQL query variables for each status (for each todo list: todo, overdue, and completed)
     $sql_todo_tasks = "SELECT TaskName, DueDate, CategoryDescription FROM Task INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE ActiveID = 1 AND DueDate > NOW()";
 
     $sql_overdue_tasks = "SELECT TaskName, DueDate, CategoryDescription FROM Task INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE ActiveID = 1 AND DueDate < NOW()";
 
-    $sql_completed_tasks = "SELECT TaskName, DueDate, CategoryDescription FROM Task INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE CompletedDate IS NOT NULL";
+    $sql_completed_tasks = "SELECT TaskName, DueDate, CategoryDescription FROM Task INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE ActiveID = 1 AND CompletedDate IS NOT NULL";
+
+    // // SQL for inserting new task
+    // $sql_insert_new_task = "INSERT INTO Task (TaskID, CategoryID, ActiveID, TaskName, DueDate, CompletedDate)
+    // VALUES (NULL, 2, 1, 'Math homework', '1900-01-01', NULL)";
 
     $connection = new MySQLi(HOST, USER, PASSWORD, DATABASE);
 
     if( $connection->connect_errno) {
         die('Connection failed: '.$connection->connect_error);
+    }
+
+    // Fetching task categories for the dropdown
+    $task_category_results = $connection->query($sql_task_categories);
+
+    if( !$task_category_results ) {
+        echo "Something went wrong with the task categories fetch!";
+        exit();
+    }
+
+    if( $task_category_results->num_rows > 0 ) {
+        while( $category = $task_category_results->fetch_assoc() ) {
+            $task_category_options .= sprintf('<option value="%s">%s</option>',
+                $category['CategoryID'],
+                $category['CategoryDescription']
+            );
+        }
     }
 
     // Fetching todo tasks
@@ -102,6 +120,29 @@
         }
     }
 
+    if( $_POST ) {
+        echo "<pre>";
+        print_r($_POST);
+        echo "</pre>";
+
+        // Prepared statement
+        if( $stmt = $connection->prepare("INSERT INTO Task(TaskID, CategoryID, ActiveID, TaskName, DueDate, CompletedDate) VALUES (NULL, ?, 1, ?, ?, NULL)") ) {
+            if( $stmt->bind_param("iss", $_POST['category'], $_POST['new_task'], $_POST['due_date']) ) {
+                if( $stmt->execute() ) {
+                    $message = "Task was added!";
+                } else {
+                    exit("There was a problem with adding your new task...");
+                } 
+            } else {
+                exit("There was a problem with the bind_param");
+            }
+        } else {
+            exit("There was a problem with the prepare statement");
+        }
+       
+        $stmt->close();
+    }
+
     $connection->close();
 ?>
 
@@ -121,6 +162,7 @@
 </head>
 <body>
     <h1>MySQLi + PHP To-Do List</h1>
+    <?php if($message) echo $message; ?>
     <form action="#" method="POST" enctype="multipart/form-data">
     <h2>Add New Task</h2>
         <p>
@@ -135,6 +177,7 @@
             <label for="category">Task category</label>
             <select name="category" id="category">
                 <option value="">Choose one</option>
+                <?php echo $task_category_options; ?>
             </select>
         </p>
         <p>
