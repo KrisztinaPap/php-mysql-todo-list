@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MySQLi + PHP To-Do List</title>
+
+    <!-- Style(s) -->
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    
+    <!-- Script(s) -->
+    <script type="text/JavaScript" src="js/scripts.js" defer></script>
+
 </head>
 <body>
     <h1>MySQLi + PHP To-Do List</h1>
@@ -36,5 +43,8 @@
     <section>
         <h2>Completed</h2>
     </section>
+    <?php
+        include './templates/footer.php';
+    ?>
 </body>
 </html>
