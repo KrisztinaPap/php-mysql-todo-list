@@ -29,23 +29,14 @@ CREATE TABLE IF NOT EXISTS Status (
 -- Create a new Task Table
 CREATE TABLE IF NOT EXISTS Task (
     TaskID int(11) PRIMARY KEY AUTO_INCREMENT,
-    StatusID int(11) NOT NULL,
     CategoryID int(11) NOT NULL,
     ActiveID int(11) NOT NULL,
     TaskName varchar(30) NOT NULL,
-    DueDate date NULL,
+    DueDate date NOT NULL,
     CompletedDate date NULL,
-    CONSTRAINT FK_Task_Status FOREIGN KEY (StatusID) REFERENCES Status(StatusID),
     CONSTRAINT FK_Task_Category FOREIGN KEY (CategoryID) REFERENCES Category(CategoryID),
     CONSTRAINT FK_Task_Active FOREIGN KEY (ActiveID) REFERENCES Active(ActiveID)
 );
-
--- Insert StatusDescriptions
-INSERT INTO Status (StatusID, StatusDescription)
-VALUES
-(NULL, 'To do'),
-(NULL, 'Overdue'),
-(NULL, 'Completed');
 
 -- Insert Sample CategoryDescriptions
 INSERT INTO Category (CategoryID, CategoryDescription)
@@ -59,13 +50,19 @@ VALUES
 (NULL, 'Active'),
 (NULL, 'Inactive');
 
-
--- SELECT TaskName, DueDate, StatusDescription, CategoryDescription FROM Task INNER JOIN Status USING(StatusID) INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE ActiveID = 1; 
-
-/* INSERT INTO Task (TaskID, StatusID, CategoryID, ActiveID, TaskName, DueDate, CompletedDate)
+INSERT INTO Task (TaskID, CategoryID, ActiveID, TaskName, DueDate, CompletedDate)
 VALUES
-(NULL, 1, 2, 1, 'Math homework', NULL, NULL),
-(NULL, 1, 2, 1, 'Write code', NULL, NULL),
-(NULL, 1, 1, 1, 'Exercise', NULL, NULL),
-(NULL, 1, 1, 1, 'Read to the kids', NULL, NULL),
-(NULL, 1, 1, 2, 'Do dishes', NULL, NULL); */
+(NULL, 2, 1, 'Math homework', '1900-01-01', NULL),
+(NULL, 2, 1, 'Write code', '2010-04-09', NULL),
+(NULL, 1, 1, 'Exercise', '2023-03-03', NULL),
+(NULL, 1, 1, 'Read to the kids', '2020-10-17', NULL),
+(NULL, 1, 2, 'Do dishes', '1683-07-04', '2020-03-23'); 
+
+-- To find the active (todo) tasks
+SELECT TaskName, DueDate, StatusDescription, CategoryDescription FROM Task INNER JOIN Status USING(StatusID) INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE ActiveID = 1 AND DueDate > NOW(); 
+
+-- To find the overdue tasks
+SELECT TaskName, DueDate, StatusDescription, CategoryDescription FROM Task INNER JOIN Status USING(StatusID) INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE ActiveID = 1 AND DueDate < NOW(); 
+
+-- To find the completed tasks
+SELECT TaskName, DueDate, StatusDescription, CategoryDescription FROM Task INNER JOIN Status USING(StatusID) INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE CompletedDate IS NOT NULL; 

@@ -15,11 +15,11 @@
     $due_date = null;
 
     // SQL query variables for each status (for each todo list: todo, overdue, and completed)
-    $sql_todo_tasks = "SELECT TaskName, DueDate, StatusDescription, CategoryDescription FROM Task INNER JOIN Status USING(StatusID) INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE ActiveID = 1 AND StatusID = 1";
+    $sql_todo_tasks = "SELECT TaskName, DueDate, CategoryDescription FROM Task INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE ActiveID = 1 AND DueDate > NOW()";
 
-    $sql_overdue_tasks = "SELECT TaskName, DueDate, StatusDescription, CategoryDescription FROM Task INNER JOIN Status USING(StatusID) INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE ActiveID = 1 AND StatusID = 2";
+    $sql_overdue_tasks = "SELECT TaskName, DueDate, CategoryDescription FROM Task INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE ActiveID = 1 AND DueDate < NOW()";
 
-    $sql_completed_tasks = "SELECT TaskName, DueDate, StatusDescription, CategoryDescription FROM Task INNER JOIN Status USING(StatusID) INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE ActiveID = 1 AND StatusID = 3";
+    $sql_completed_tasks = "SELECT TaskName, DueDate, CategoryDescription FROM Task INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE CompletedDate IS NOT NULL";
 
     $connection = new MySQLi(HOST, USER, PASSWORD, DATABASE);
 
