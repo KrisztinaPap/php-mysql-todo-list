@@ -52,3 +52,12 @@ INSERT INTO Category (CategoryID, CategoryDescription)
 VALUES
 (NULL, 'Chores'),
 (NULL, 'Homework');
+
+-- Insert ActiveDescriptions
+INSERT INTO Active (ActiveID, ActiveDescription)
+VALUES
+(NULL, 'Active'),
+(NULL, 'Inactive');
+
+
+-- SELECT TaskName, DueDate, StatusDescription, CategoryDescription FROM Task INNER JOIN Status USING(StatusID) INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE ActiveID = 1; 

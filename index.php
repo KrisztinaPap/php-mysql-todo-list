@@ -1,3 +1,30 @@
+<?php
+    require 'constants.php';
+
+    $new_task = null;
+    $due_date = null;
+    $category = null;
+
+    $sql_tasks = "SELECT TaskName, DueDate, StatusDescription, CategoryDescription FROM Task INNER JOIN Status USING(StatusID) INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE ActiveID = 1";
+
+    $connection = new MySQLi(HOST, USER, PASSWORD, DATABASE);
+
+    if( $connection->connect_errno) {
+        die('Connection failed: '.$connection->connect_error);
+    }
+
+    $tasks_result = $connection->query($sql_tasks);
+
+    if( !$tasks_result ) {
+        exit("Something went wrong with the fetch");
+    } else {
+       
+    }
+    
+
+    $connection->close();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
