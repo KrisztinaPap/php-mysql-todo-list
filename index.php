@@ -1,6 +1,7 @@
 <?php
     require 'constants.php';
 
+    $tasks = null;
     $new_task = null;
     $due_date = null;
     $category = null;
@@ -17,8 +18,18 @@
 
     if( !$tasks_result ) {
         exit("Something went wrong with the fetch");
-    } else {
-       
+    } 
+    if( 0 === $tasks_result->num_rows ) {
+        $tasks = "You have no active tasks";
+    }
+    if( $tasks_result->num_rows > 0 ) {
+        while( $task = $tasks_result->fetch_assoc() ) {
+            $tasks .= sprintf('
+            <li>%s</li>
+            ',
+            $task['TaskName']
+            );
+        }
     }
     
 
@@ -63,6 +74,7 @@
     </form>
     <section>
         <h2>Things to do</h2>
+        <ul><?php echo $tasks; ?></ul>
     </section>
     <section>
         <h2>Overdue</h2>
