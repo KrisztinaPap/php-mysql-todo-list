@@ -14,40 +14,12 @@
         die('Connection failed: '.$connection->connect_error);
     }
 
-    // Fetching task categories for the dropdown
-    function categoryDropdown($connection) {
-        // SQL query variables
-        $sql_task_categories = "SELECT CategoryID, CategoryDescription FROM Category";
-
-        // Clear the list to avoid duplicating all existing entries
-        $task_category_options = null;
-        $task_category_results = $connection->query($sql_task_categories);
-
-        if( !$task_category_results ) {
-            echo "Something went wrong with the task categories fetch!";
-            exit();
-        }
-    
-        if( $task_category_results->num_rows > 0 ) {
-            while( $category = $task_category_results->fetch_assoc() ) {
-                $task_category_options .= sprintf('<option value="%s">%s</option>',
-                    $category['CategoryID'],
-                    $category['CategoryDescription']
-                );
-            }
-        }
-        return $task_category_options;
-    }
+    require_once('includes/category_dropdown.php');
 
     require_once('includes/todo_fetch.php');
     require_once('includes/overdue_fetch.php');
     require_once('includes/completed_fetch.php');
     require_once('includes/soft_deleted_fetch.php');
-       
-    
-    
-
-    
 
     // Fetch category options for the dropdown
     $task_category_options = categoryDropdown($connection);
@@ -199,6 +171,7 @@
                 <option value="">Choose one</option>
                 <?php echo $task_category_options; ?>
             </select>
+            <a href="admin/category_edit.php">Edit Categories</a>
         </p>
         <p>
             <input type="submit" name="add" value="Add New Task">

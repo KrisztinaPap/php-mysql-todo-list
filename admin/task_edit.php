@@ -35,38 +35,20 @@
             $task_category = $row['CategoryDescription'];
     }  
 
-    // Fetching task categories for the dropdown
-    function categoryDropdown($connection) {
-        // SQL query variables
-        $sql_task_categories = "SELECT CategoryID, CategoryDescription FROM Category";
-
-        // Clear the list to avoid duplicating all existing entries
-        $task_category_options = null;
-        $task_category_results = $connection->query($sql_task_categories);
-
-        if( !$task_category_results ) {
-            echo "Something went wrong with the task categories fetch!";
-            exit();
-        }
-    
-        if( $task_category_results->num_rows > 0 ) {
-            while( $category = $task_category_results->fetch_assoc() ) {
-                $task_category_options .= sprintf('<option value="%s">%s</option>',
-                    $category['CategoryID'],
-                    $category['CategoryDescription']
-                );
-            }
-        }
-        return $task_category_options;
-    }
+    require_once('../includes/category_dropdown.php');
+ 
     // Fetch category options for the dropdown
     $task_category_options = categoryDropdown($connection);
 
     if( $_POST ) {
-        if( $statement = $connection->prepare("UPDATE Task INNER JOIN Category USING(CategoryID) SET TaskName=?, DueDate=?, CategoryDescription=? WHERE TaskID=$task_id")) {
-            if( $statement->bind_param("ssi", $_POST['task_name'], $_POST['due_date'], $_POST['category_description']) ) {
+        if( $statement = $connection->prepare("UPDATE Task SET TaskName=?, DueDate=?, CategoryID=? WHERE TaskID=$task_id")) {
+            if( $statement->bind_param("ssi", $_POST['task_name'], $_POST['due_date'], $_POST['category']) ) {
                 if( $statement->execute() ) {
                    $message = "You have updated successfully";
+                   require_once('../includes/todo_fetch.php');
+                   require_once('../includes/overdue_fetch.php');
+                   require_once('../includes/completed_fetch.php');
+                   require_once('../includes/soft_deleted_fetch.php');
                 } else {
                     exit("There was a problem with the execute");
                 }
@@ -92,28 +74,29 @@
     <title>Edit Task</title>
 </head>
 <body>
+    <a href="../index.php">Home</a>
     <h1>Edit Task</h1>
     <form action="#" method="POST" enctype="multipart/form-data">
-    <p>
-        <label for="task_name">Task Name</label>
-        <input type="text" name="task_name" id="task_name" value="<?php echo $task_name; ?>">
-    </p>
-    <p>
-        <label for="due_date">Due Date</label>
-        <input type="date" name="due_date" id="due_date" value="<?php echo $due_date; ?>">
-    </p>
-    <p>
-        <label for="category">Current Task Category: <?php echo $task_category; ?></label>
-    </p>
-    <p>
-        <select name="category" id="category" value="">
-            <option value="">Choose another</option>
-            <?php echo $task_category_options; ?>
-        </select>
-    </p>
-    <p>
-        <input type="submit" value="Update">
-    </p>
+        <p>
+            <label for="task_name">Task Name</label>
+            <input type="text" name="task_name" id="task_name" value="<?php echo $task_name; ?>">
+        </p>
+        <p>
+            <label for="due_date">Due Date</label>
+            <input type="date" name="due_date" id="due_date" value="<?php echo $due_date; ?>">
+        </p>
+        <p>
+            <label for="category">Current Task Category: <?php echo $task_category; ?></label>
+        </p>
+        <p>
+            <select name="category" id="category" value="">
+                <option value="">Choose another</option>
+                <?php echo $task_category_options; ?>
+            </select>
+        </p>
+        <p>
+            <input type="submit" value="Update">
+        </p>
     </form>
 </body>
 </html>
