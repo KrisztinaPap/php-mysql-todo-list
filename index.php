@@ -61,7 +61,7 @@
                 <td>%s</td>
                 <td>%s</td>
                 <td>%s</td>
-                <td><button type="submit" name="delete" value="%d">DELETE</button></td>
+                <td><button type="submit" name="soft_delete" value="%d">DELETE</button></td>
                 <td><a href="task_delete.php?task_id=%d">Done</a></td>
                 <td><a href="task_edit.php?task_id=%d">Edit</a></td>
             </tr>
@@ -92,7 +92,7 @@
                 <td>%s</td>
                 <td>%s</td>
                 <td>%s</td>
-                <td><button type="submit" name="delete" value="%d">DELETE</button></td>
+                <td><button type="submit" name="soft_delete" value="%d">DELETE</button></td>
                 <td><a href="task_delete.php?task_id=%d">Done</a></td>
                 <td><a href="task_edit.php?task_id=%d">Edit</a></td>
             </tr>
@@ -123,7 +123,7 @@
                 <td>%s</td>
                 <td>%s</td>
                 <td>%s</td>
-                <td><button type="submit" name="delete" value="%d">DELETE</button></td>
+                <td><button type="submit" name="soft_delete" value="%d">DELETE</button></td>
                 <td><a href="task_delete.php?task_id=%d">Done</a></td>
                 <td><a href="task_edit.php?task_id=%d">Edit</a></td>
             </tr>
@@ -142,8 +142,6 @@
         echo "<pre>";
         print_r($_POST);
         echo "</pre>";
-        $task_id = $_POST['TaskID'];
-        echo $task_id;
 
         // Prepared statement
         if( $stmt = $connection->prepare("INSERT INTO Task(TaskID, CategoryID, ActiveID, TaskName, DueDate, CompletedDate) VALUES (NULL, ?, 1, ?, ?, NULL)") ) {
@@ -171,7 +169,7 @@
                                 <td>%s</td>
                                 <td>%s</td>
                                 <td>%s</td>
-                                <td><button type="submit" name="delete" value="%d">DELETE</button></td>
+                                <td><button type="submit" name="soft_delete" value="%d">DELETE</button></td>
                                 <td><a href="task_delete.php?task_id=%d">Done</a></td>
                                 <td><a href="task_edit.php?task_id=%d">Edit</a></td>
                             </tr>
@@ -206,7 +204,42 @@
                                 <td>%s</td>
                                 <td>%s</td>
                                 <td>%s</td>
-                                <td><button type="submit" name="delete" value="%d">DELETE</button></td>
+                                <td><button type="submit" name="soft_delete" value="%d">DELETE</button></td>
+                                <td><a href="task_delete.php?task_id=%d">Done</a></td>
+                                <td><a href="task_edit.php?task_id=%d">Edit</a></td>
+                            </tr>
+                            ',
+                            $task['CategoryDescription'],
+                            $task['TaskName'],
+                            $task['DueDate'],
+                            $task['TaskID'],
+                            $task['TaskID'],
+                            $task['TaskID']
+                            );       
+                        }
+                    }
+
+                    // Fetching completed tasks
+
+                    // Clear the list to avoid duplicating all existing entries
+                    $completed_tasks = null;
+
+                    $completed_task_result = $connection->query($sql_completed_tasks);
+
+                    if( !$completed_task_result ) {
+                        exit("Something went wrong with the fetch");
+                    } 
+                    if( 0 === $completed_task_result->num_rows ) {
+                        $completed_tasks = "You have no active tasks";
+                    }
+                    if( $completed_task_result->num_rows > 0 ) {
+                        while( $task = $completed_task_result->fetch_assoc() ) {
+                            $completed_tasks .= sprintf('
+                            <tr>
+                                <td>%s</td>
+                                <td>%s</td>
+                                <td>%s</td>
+                                <td><button type="submit" name="soft_delete" value="%d">DELETE</button></td>
                                 <td><a href="task_delete.php?task_id=%d">Done</a></td>
                                 <td><a href="task_edit.php?task_id=%d">Edit</a></td>
                             </tr>
@@ -235,10 +268,155 @@
         $stmt->close();
     }
 
-    else if(isset($_POST['delete'])) {
+    else if(isset($_POST['soft_delete'])) {
         echo "<pre>";
         print_r($_POST);
         echo "</pre>";
+
+        $task_id = $_POST['soft_delete'];
+        $sql_soft_delete = "UPDATE Task SET ActiveID=2 WHERE TaskID=$task_id";
+
+        $soft_delete_result = $connection->query($sql_soft_delete);
+
+        if( !$soft_delete_result ) {
+            exit("Something went wrong with the soft delete");
+        } 
+        if( $soft_delete_result ) {
+            // Fetching todo tasks
+
+            // Clear the list to avoid duplicating all existing entries
+            $todo_tasks = null;
+
+            $todo_task_result = $connection->query($sql_todo_tasks);
+
+            if( !$todo_task_result ) {
+                exit("Something went wrong with the fetch");
+            } 
+            if( 0 === $todo_task_result->num_rows ) {
+                $tasks = "You have no active tasks";
+            }
+            if( $todo_task_result->num_rows > 0 ) {
+                while( $task = $todo_task_result->fetch_assoc() ) {
+                    $todo_tasks .= sprintf('
+                    <tr>
+                        <td>%s</td>
+                        <td>%s</td>
+                        <td>%s</td>
+                        <td><button type="submit" name="soft_delete" value="%d">DELETE</button></td>
+                        <td><a href="task_delete.php?task_id=%d">Done</a></td>
+                        <td><a href="task_edit.php?task_id=%d">Edit</a></td>
+                    </tr>
+                    ',
+                    $task['CategoryDescription'],
+                    $task['TaskName'],
+                    $task['DueDate'],
+                    $task['TaskID'],
+                    $task['TaskID'],
+                    $task['TaskID']
+                    );       
+                }
+            }
+
+            // Fetching overdue tasks
+
+            // Clear the list to avoid duplicating all existing entries
+            $overdue_tasks = null;
+
+            $overdue_task_result = $connection->query($sql_overdue_tasks);
+
+            if( !$overdue_task_result ) {
+                exit("Something went wrong with the fetch");
+            } 
+            if( 0 === $overdue_task_result->num_rows ) {
+                $overdue_tasks = "You have no active tasks";
+            }
+            if( $overdue_task_result->num_rows > 0 ) {
+                while( $task = $overdue_task_result->fetch_assoc() ) {
+                    $overdue_tasks .= sprintf('
+                    <tr>
+                        <td>%s</td>
+                        <td>%s</td>
+                        <td>%s</td>
+                        <td><button type="submit" name="soft_delete" value="%d">DELETE</button></td>
+                        <td><a href="task_delete.php?task_id=%d">Done</a></td>
+                        <td><a href="task_edit.php?task_id=%d">Edit</a></td>
+                    </tr>
+                    ',
+                    $task['CategoryDescription'],
+                    $task['TaskName'],
+                    $task['DueDate'],
+                    $task['TaskID'],
+                    $task['TaskID'],
+                    $task['TaskID']
+                    );       
+                }
+            }
+        
+            // Fetching completed tasks
+            $completed_task_result = $connection->query($sql_completed_tasks);
+
+            if( !$completed_task_result ) {
+                exit("Something went wrong with the fetch");
+            } 
+            if( 0 === $completed_task_result->num_rows ) {
+                $completed_tasks = "You have no active tasks";
+            }
+            if( $completed_task_result->num_rows > 0 ) {
+                while( $task = $completed_task_result->fetch_assoc() ) {
+                    $completed_tasks .= sprintf('
+                    <tr>
+                        <td>%s</td>
+                        <td>%s</td>
+                        <td>%s</td>
+                        <td><button type="submit" name="soft_delete" value="%d">DELETE</button></td>
+                        <td><a href="task_delete.php?task_id=%d">Done</a></td>
+                        <td><a href="task_edit.php?task_id=%d">Edit</a></td>
+                    </tr>
+                    ',
+                    $task['CategoryDescription'],
+                    $task['TaskName'],
+                    $task['DueDate'],
+                    $task['TaskID'],
+                    $task['TaskID'],
+                    $task['TaskID']
+                    );       
+                }
+            }
+            // Fetching completed tasks
+
+            // Clear the list to avoid duplicating all existing entries
+            $completed_tasks = null;
+
+            $completed_task_result = $connection->query($sql_completed_tasks);
+
+            if( !$completed_task_result ) {
+                exit("Something went wrong with the fetch");
+            } 
+            if( 0 === $completed_task_result->num_rows ) {
+                $completed_tasks = "You have no active tasks";
+            }
+            if( $completed_task_result->num_rows > 0 ) {
+                while( $task = $completed_task_result->fetch_assoc() ) {
+                    $completed_tasks .= sprintf('
+                    <tr>
+                        <td>%s</td>
+                        <td>%s</td>
+                        <td>%s</td>
+                        <td><button type="submit" name="soft_delete" value="%d">DELETE</button></td>
+                        <td><a href="task_delete.php?task_id=%d">Done</a></td>
+                        <td><a href="task_edit.php?task_id=%d">Edit</a></td>
+                    </tr>
+                    ',
+                    $task['CategoryDescription'],
+                    $task['TaskName'],
+                    $task['DueDate'],
+                    $task['TaskID'],
+                    $task['TaskID'],
+                    $task['TaskID']
+                    );       
+                }
+            }
+        }
     }
 
     $connection->close();
