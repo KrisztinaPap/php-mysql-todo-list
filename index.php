@@ -173,7 +173,7 @@
                     <td>%s</td>
                     <td>%s</td>
                     <td>%s</td>
-                    <td><button type="submit" name="soft_delete" value="%d">DELETE</button></td>
+                    <td><button type="submit" name="hard_delete" value="%d">HARD DELETE</button></td>
                 </tr>
                 ',
                 $task['CategoryDescription'],
@@ -267,6 +267,24 @@
 
         if( !$unComplete_result ) {
             exit("Something went wrong with re-activating your task");
+        } else {
+            // Fetch content of todo lists (todo, overdue, completed, and soft-deleted)
+            $todo_tasks = toDoTasks($connection);
+            $overdue_tasks = overdueTasks($connection);
+            $completed_tasks = completedTasks($connection);
+            $soft_deleted_tasks = softDeletedTasks($connection);
+        }
+    }
+
+    else if(isset($_POST['hard_delete'])) {
+
+        $task_id = $_POST['hard_delete'];
+        $sql_hard_delete = "DELETE FROM Task WHERE TaskID=$task_id";
+
+        $hard_delete_result = $connection->query($sql_hard_delete);
+
+        if( !$hard_delete_result ) {
+            exit("Something went wrong with hard deleting your task");
         } else {
             // Fetch content of todo lists (todo, overdue, completed, and soft-deleted)
             $todo_tasks = toDoTasks($connection);
