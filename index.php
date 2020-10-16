@@ -12,11 +12,11 @@
     $message = null;
 
     // SQL query variables for each status (for each todo list: todo, overdue, and completed)
-    $sql_todo_tasks = "SELECT TaskName, DueDate, CategoryDescription FROM Task INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE ActiveID = 1 AND DueDate > NOW()";
+    $sql_todo_tasks = "SELECT TaskID, TaskName, DueDate, CategoryDescription FROM Task INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE ActiveID = 1 AND DueDate > NOW()";
 
-    $sql_overdue_tasks = "SELECT TaskName, DueDate, CategoryDescription FROM Task INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE ActiveID = 1 AND DueDate < NOW()";
+    $sql_overdue_tasks = "SELECT TaskID, TaskName, DueDate, CategoryDescription FROM Task INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE ActiveID = 1 AND DueDate < NOW()";
 
-    $sql_completed_tasks = "SELECT TaskName, DueDate, CategoryDescription FROM Task INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE ActiveID = 1 AND CompletedDate IS NOT NULL";
+    $sql_completed_tasks = "SELECT TaskID, TaskName, DueDate, CategoryDescription FROM Task INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE ActiveID = 1 AND CompletedDate IS NOT NULL";
 
     // // SQL for inserting new task
     // $sql_insert_new_task = "INSERT INTO Task (TaskID, CategoryID, ActiveID, TaskName, DueDate, CompletedDate)
@@ -61,11 +61,17 @@
                 <td>%s</td>
                 <td>%s</td>
                 <td>%s</td>
+                <td><button type="submit" name="delete" value="%d">DELETE</button></td>
+                <td><a href="task_delete.php?task_id=%d">Done</a></td>
+                <td><a href="task_edit.php?task_id=%d">Edit</a></td>
             </tr>
             ',
             $task['CategoryDescription'],
             $task['TaskName'],
-            $task['DueDate']
+            $task['DueDate'],
+            $task['TaskID'],
+            $task['TaskID'],
+            $task['TaskID']
             );       
         }
     }
@@ -86,11 +92,17 @@
                 <td>%s</td>
                 <td>%s</td>
                 <td>%s</td>
+                <td><button type="submit" name="delete" value="%d">DELETE</button></td>
+                <td><a href="task_delete.php?task_id=%d">Done</a></td>
+                <td><a href="task_edit.php?task_id=%d">Edit</a></td>
             </tr>
             ',
             $task['CategoryDescription'],
             $task['TaskName'],
-            $task['DueDate']
+            $task['DueDate'],
+            $task['TaskID'],
+            $task['TaskID'],
+            $task['TaskID']
             );       
         }
     }
@@ -111,19 +123,27 @@
                 <td>%s</td>
                 <td>%s</td>
                 <td>%s</td>
+                <td><button type="submit" name="delete" value="%d">DELETE</button></td>
+                <td><a href="task_delete.php?task_id=%d">Done</a></td>
+                <td><a href="task_edit.php?task_id=%d">Edit</a></td>
             </tr>
             ',
             $task['CategoryDescription'],
             $task['TaskName'],
-            $task['DueDate']
+            $task['DueDate'],
+            $task['TaskID'],
+            $task['TaskID'],
+            $task['TaskID']
             );       
         }
     }
 
-    if( $_POST ) {
+    if(isset($_POST['add'])) {
         echo "<pre>";
         print_r($_POST);
         echo "</pre>";
+        $task_id = $_POST['TaskID'];
+        echo $task_id;
 
         // Prepared statement
         if( $stmt = $connection->prepare("INSERT INTO Task(TaskID, CategoryID, ActiveID, TaskName, DueDate, CompletedDate) VALUES (NULL, ?, 1, ?, ?, NULL)") ) {
@@ -135,7 +155,7 @@
 
                     // Clear the list to avoid duplicating all existing entries
                     $todo_tasks = null;
-                    
+
                     $todo_task_result = $connection->query($sql_todo_tasks);
 
                     if( !$todo_task_result ) {
@@ -151,11 +171,17 @@
                                 <td>%s</td>
                                 <td>%s</td>
                                 <td>%s</td>
+                                <td><button type="submit" name="delete" value="%d">DELETE</button></td>
+                                <td><a href="task_delete.php?task_id=%d">Done</a></td>
+                                <td><a href="task_edit.php?task_id=%d">Edit</a></td>
                             </tr>
                             ',
                             $task['CategoryDescription'],
                             $task['TaskName'],
-                            $task['DueDate']
+                            $task['DueDate'],
+                            $task['TaskID'],
+                            $task['TaskID'],
+                            $task['TaskID']
                             );       
                         }
                     }
@@ -180,11 +206,17 @@
                                 <td>%s</td>
                                 <td>%s</td>
                                 <td>%s</td>
+                                <td><button type="submit" name="delete" value="%d">DELETE</button></td>
+                                <td><a href="task_delete.php?task_id=%d">Done</a></td>
+                                <td><a href="task_edit.php?task_id=%d">Edit</a></td>
                             </tr>
                             ',
                             $task['CategoryDescription'],
                             $task['TaskName'],
-                            $task['DueDate']
+                            $task['DueDate'],
+                            $task['TaskID'],
+                            $task['TaskID'],
+                            $task['TaskID']
                             );       
                         }
                     }
@@ -203,6 +235,12 @@
         $stmt->close();
     }
 
+    else if(isset($_POST['delete'])) {
+        echo "<pre>";
+        print_r($_POST);
+        echo "</pre>";
+    }
+
     $connection->close();
 ?>
 
@@ -212,6 +250,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MySQLi + PHP To-Do List</title>
+
+    <!-- Font Awesome icons -->
+    <link rel="stylesheet" href="all.min.css">
 
     <!-- Style(s) -->
     <link rel="stylesheet" type="text/css" href="css/main.css">
@@ -241,27 +282,27 @@
             </select>
         </p>
         <p>
-            <input type="submit" value="Add New Task">
+            <input type="submit" name="add" value="Add New Task">
         </p>
+        <section>
+            <h2>Things to do</h2>
+                <table>
+                    <?php echo $todo_tasks; ?>
+                </table>
+        </section>
+        <section>
+            <h2>Overdue</h2>
+            <table>
+                <?php echo $overdue_tasks; ?>
+            </table>
+        </section>
+        <section>
+            <h2>Completed</h2>
+            <table>
+                <?php echo $completed_tasks; ?>
+            </table>
+        </section>
     </form>
-    <section>
-        <h2>Things to do</h2>
-        <table>
-            <?php echo $todo_tasks; ?>
-        </table>
-    </section>
-    <section>
-        <h2>Overdue</h2>
-        <table>
-            <?php echo $overdue_tasks; ?>
-        </table>
-    </section>
-    <section>
-        <h2>Completed</h2>
-        <table>
-            <?php echo $completed_tasks; ?>
-        </table>
-    </section>
     <?php
         include './templates/footer.php';
     ?>
