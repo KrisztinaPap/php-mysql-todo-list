@@ -130,6 +130,66 @@
             if( $stmt->bind_param("iss", $_POST['category'], $_POST['new_task'], $_POST['due_date']) ) {
                 if( $stmt->execute() ) {
                     $message = "Task was added!";
+
+                    // Fetching todo tasks
+
+                    // Clear the list to avoid duplicating all existing entries
+                    $todo_tasks = null;
+                    
+                    $todo_task_result = $connection->query($sql_todo_tasks);
+
+                    if( !$todo_task_result ) {
+                        exit("Something went wrong with the fetch");
+                    } 
+                    if( 0 === $todo_task_result->num_rows ) {
+                        $tasks = "You have no active tasks";
+                    }
+                    if( $todo_task_result->num_rows > 0 ) {
+                        while( $task = $todo_task_result->fetch_assoc() ) {
+                            $todo_tasks .= sprintf('
+                            <tr>
+                                <td>%s</td>
+                                <td>%s</td>
+                                <td>%s</td>
+                            </tr>
+                            ',
+                            $task['CategoryDescription'],
+                            $task['TaskName'],
+                            $task['DueDate']
+                            );       
+                        }
+                    }
+
+                    // Fetching overdue tasks
+
+                    // Clear the list to avoid duplicating all existing entries
+                    $overdue_tasks = null;
+
+                    $overdue_task_result = $connection->query($sql_overdue_tasks);
+
+                    if( !$overdue_task_result ) {
+                        exit("Something went wrong with the fetch");
+                    } 
+                    if( 0 === $overdue_task_result->num_rows ) {
+                        $overdue_tasks = "You have no active tasks";
+                    }
+                    if( $overdue_task_result->num_rows > 0 ) {
+                        while( $task = $overdue_task_result->fetch_assoc() ) {
+                            $overdue_tasks .= sprintf('
+                            <tr>
+                                <td>%s</td>
+                                <td>%s</td>
+                                <td>%s</td>
+                            </tr>
+                            ',
+                            $task['CategoryDescription'],
+                            $task['TaskName'],
+                            $task['DueDate']
+                            );       
+                        }
+                    }
+
+
                 } else {
                     exit("There was a problem with adding your new task...");
                 } 
