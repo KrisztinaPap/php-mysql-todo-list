@@ -1,14 +1,7 @@
 <?php
     require 'constants.php';
 
-    // For the Task Categories dropdown
-    $task_category_options = null;
-    $sql_task_categories = "SELECT CategoryID, CategoryDescription FROM Category";
-
     // Variables for the 3 different task lists (todo(active), overdue, and completed)
-    $todo_tasks = null;
-    $overdue_tasks = null;
-    $completed_tasks = null;
     $message = null;
 
     // // SQL for inserting new task
@@ -22,169 +15,42 @@
     }
 
     // Fetching task categories for the dropdown
-    $task_category_results = $connection->query($sql_task_categories);
-
-    if( !$task_category_results ) {
-        echo "Something went wrong with the task categories fetch!";
-        exit();
-    }
-
-    if( $task_category_results->num_rows > 0 ) {
-        while( $category = $task_category_results->fetch_assoc() ) {
-            $task_category_options .= sprintf('<option value="%s">%s</option>',
-                $category['CategoryID'],
-                $category['CategoryDescription']
-            );
-        }
-    }
-
-    // Fetching todo tasks
-    function toDoTasks($connection) {
-        // SQL query variables for each status (for each todo list: todo, overdue, and completed)
-        $sql_todo_tasks = "SELECT TaskID, TaskName, DueDate, CategoryDescription FROM Task INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE ActiveID = 1 AND DueDate > NOW() AND CompletedDate IS NULL";
+    function categoryDropdown($connection) {
+        // SQL query variables
+        $sql_task_categories = "SELECT CategoryID, CategoryDescription FROM Category";
 
         // Clear the list to avoid duplicating all existing entries
-        $todo_tasks = null;
-        $todo_task_result = $connection->query($sql_todo_tasks);     
+        $task_category_options = null;
+        $task_category_results = $connection->query($sql_task_categories);
 
-        if( !$todo_task_result ) {
-            exit("Something went wrong with the fetch");
-        } 
-        if( 0 === $todo_task_result->num_rows ) {
-            $tasks = "You have no active tasks";
+        if( !$task_category_results ) {
+            echo "Something went wrong with the task categories fetch!";
+            exit();
         }
-        if( $todo_task_result->num_rows > 0 ) {
-            while( $task = $todo_task_result->fetch_assoc() ) {
-                $todo_tasks .= sprintf('
-                <tr>
-                    <td>%s</td>
-                    <td>%s</td>
-                    <td>%s</td>
-                    <td><button type="submit" name="soft_delete" value="%d">DELETE</button></td>
-                    <td><button type="submit" name="complete" value="%d">Complete</button></td>
-                    <td><a href="task_edit.php?task_id=%d">Edit</a></td>
-                </tr>
-                ',
-                $task['CategoryDescription'],
-                $task['TaskName'],
-                $task['DueDate'],
-                $task['TaskID'],
-                $task['TaskID'],
-                $task['TaskID']
-                );       
-            }
-        }
-        return $todo_tasks;
-    }
-
-    // Fetching overdue tasks
-    function overdueTasks($connection) {
-        $sql_overdue_tasks = "SELECT TaskID, TaskName, DueDate, CategoryDescription FROM Task INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE ActiveID = 1 AND DueDate < NOW() AND CompletedDate IS NULL";
-
-        // Clear the list to avoid duplicating all existing entries
-        $overdue_tasks = null;
-        $overdue_task_result = $connection->query($sql_overdue_tasks);
-
-        if( !$overdue_task_result ) {
-            exit("Something went wrong with the fetch");
-        } 
-        if( 0 === $overdue_task_result->num_rows ) {
-            $overdue_tasks = "You have no active tasks";
-        }
-        if( $overdue_task_result->num_rows > 0 ) {
-            while( $task = $overdue_task_result->fetch_assoc() ) {
-                $overdue_tasks .= sprintf('
-                <tr>
-                    <td>%s</td>
-                    <td>%s</td>
-                    <td>%s</td>
-                    <td><button type="submit" name="soft_delete" value="%d">DELETE</button></td>
-                    <td><button type="submit" name="complete" value="%d">Complete</button></td>
-                    <td><a href="task_edit.php?task_id=%d">Edit</a></td>
-                </tr>
-                ',
-                $task['CategoryDescription'],
-                $task['TaskName'],
-                $task['DueDate'],
-                $task['TaskID'],
-                $task['TaskID'],
-                $task['TaskID']
-                );       
-            }
-        }
-        return $overdue_tasks;
-    }
     
-    // Fetching completed tasks
-    function completedTasks($connection) {
-        $sql_completed_tasks = "SELECT TaskID, TaskName, DueDate, CategoryDescription FROM Task INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE ActiveID = 1 AND CompletedDate IS NOT NULL";
-
-        // Clear the list to avoid duplicating all existing entries
-        $completed_tasks = null;
-
-        $completed_task_result = $connection->query($sql_completed_tasks);
-
-        if( !$completed_task_result ) {
-            exit("Something went wrong with the fetch");
-        } 
-        if( 0 === $completed_task_result->num_rows ) {
-            $completed_tasks = "You have no active tasks";
-        }
-        if( $completed_task_result->num_rows > 0 ) {
-            while( $task = $completed_task_result->fetch_assoc() ) {
-                $completed_tasks .= sprintf('
-                <tr>
-                    <td>%s</td>
-                    <td>%s</td>
-                    <td>%s</td>
-                    <td><button type="submit" name="soft_delete" value="%d">DELETE</button></td>
-                    <td><button type="submit" name="unComplete" value="%d">Un-Complete</button></td>
-                </tr>
-                ',
-                $task['CategoryDescription'],
-                $task['TaskName'],
-                $task['DueDate'],
-                $task['TaskID'],
-                $task['TaskID']
-                );       
+        if( $task_category_results->num_rows > 0 ) {
+            while( $category = $task_category_results->fetch_assoc() ) {
+                $task_category_options .= sprintf('<option value="%s">%s</option>',
+                    $category['CategoryID'],
+                    $category['CategoryDescription']
+                );
             }
         }
-        return $completed_tasks;
+        return $task_category_options;
     }
 
-    function softDeletedTasks($connection) {
-        $sql_soft_deleted_tasks = "SELECT TaskID, TaskName, DueDate, CategoryDescription FROM Task INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE ActiveID = 2";
+    require_once('includes/todo_fetch.php');
+    require_once('includes/overdue_fetch.php');
+    require_once('includes/completed_fetch.php');
+    require_once('includes/soft_deleted_fetch.php');
+       
+    
+    
 
-        // Clear the list to avoid duplicating all existing entries
-        $soft_deleted_tasks = null;
+    
 
-        $soft_deleted_task_result = $connection->query($sql_soft_deleted_tasks);
-
-        if( !$soft_deleted_task_result ) {
-            exit("Something went wrong with the fetch");
-        } 
-        if( 0 === $soft_deleted_task_result->num_rows ) {
-            $soft_deleted_tasks = "You have no active tasks";
-        }
-        if( $soft_deleted_task_result->num_rows > 0 ) {
-            while( $task = $soft_deleted_task_result->fetch_assoc() ) {
-                $soft_deleted_tasks .= sprintf('
-                <tr>
-                    <td>%s</td>
-                    <td>%s</td>
-                    <td>%s</td>
-                    <td><button type="submit" name="hard_delete" value="%d">HARD DELETE</button></td>
-                </tr>
-                ',
-                $task['CategoryDescription'],
-                $task['TaskName'],
-                $task['DueDate'],
-                $task['TaskID']
-                );       
-            }
-        }
-        return $soft_deleted_tasks;
-    }
+    // Fetch category options for the dropdown
+    $task_category_options = categoryDropdown($connection);
 
     // Fetch content of todo lists (todo, overdue, completed, and soft-deleted)
     $todo_tasks = toDoTasks($connection);

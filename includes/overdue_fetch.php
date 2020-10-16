@@ -1,23 +1,22 @@
 <?php
 
-// Fetching todo tasks
-    function toDoTasks($connection) {
-        // SQL query variables for each status (for each todo list: todo, overdue, and completed)
-        $sql_todo_tasks = "SELECT TaskID, TaskName, DueDate, CategoryDescription FROM Task INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE ActiveID = 1 AND DueDate > NOW() AND CompletedDate IS NULL";
+// Fetching overdue tasks
+    function overdueTasks($connection) {
+        $sql_overdue_tasks = "SELECT TaskID, TaskName, DueDate, CategoryDescription FROM Task INNER JOIN Category USING(CategoryID) INNER JOIN Active USING(ActiveID) WHERE ActiveID = 1 AND DueDate < NOW() AND CompletedDate IS NULL";
 
         // Clear the list to avoid duplicating all existing entries
-        $todo_tasks = null;
-        $todo_task_result = $connection->query($sql_todo_tasks);     
+        $overdue_tasks = null;
+        $overdue_task_result = $connection->query($sql_overdue_tasks);
 
-        if( !$todo_task_result ) {
+        if( !$overdue_task_result ) {
             exit("Something went wrong with the fetch");
         } 
-        if( 0 === $todo_task_result->num_rows ) {
-            $tasks = "You have no active tasks";
+        if( 0 === $overdue_task_result->num_rows ) {
+            $overdue_tasks = "You have no active tasks";
         }
-        if( $todo_task_result->num_rows > 0 ) {
-            while( $task = $todo_task_result->fetch_assoc() ) {
-                $todo_tasks .= sprintf('
+        if( $overdue_task_result->num_rows > 0 ) {
+            while( $task = $overdue_task_result->fetch_assoc() ) {
+                $overdue_tasks .= sprintf('
                 <tr>
                     <td>%s</td>
                     <td>%s</td>
@@ -36,5 +35,5 @@
                 );       
             }
         }
-        return $todo_tasks;
+        return $overdue_tasks;
     }
