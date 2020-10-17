@@ -27,7 +27,7 @@
         exit("Something went wrong with the task query");
     }
     if( 0 === $edit_task_result->num_rows) {
-        exit("There is no such task");
+        exit("There is no such task!");
     }
     while( $row = $edit_task_result->fetch_assoc() ) {
             $task_name = $row['TaskName'];
@@ -82,6 +82,7 @@
 <body>
     <a href="../index.php" class="button">Home</a>
     <h1>Edit Task</h1>
+    <p class="message"><?php if($message) echo $message; ?></p>
     <form action="#" method="POST" enctype="multipart/form-data">
         <p>
             <label for="task_name">Task Name</label>

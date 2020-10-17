@@ -33,29 +33,34 @@
 
     if(isset($_POST['add'])) {
 
-        // Prepared statement
-        if( $stmt = $connection->prepare("INSERT INTO Task(TaskID, CategoryID, ActiveID, TaskName, DueDate, CompletedDate) VALUES (NULL, ?, 1, ?, ?, NULL)") ) {
-            if( $stmt->bind_param("iss", $_POST['category'], $_POST['new_task'], $_POST['due_date']) ) {
-                if( $stmt->execute() ) {
-                    $message = "Task was added!";
-
-                     // Fetch content of todo lists (todo, overdue, completed, and soft-deleted)
-                    $todo_tasks = toDoTasks($connection);
-                    $overdue_tasks = overdueTasks($connection);
-                    $completed_tasks = completedTasks($connection);
-                    $soft_deleted_tasks = softDeletedTasks($connection);
-
-                } else {
-                    exit("There was a problem with adding your new task...");
-                } 
-            } else {
-                exit("There was a problem with the bind_param");
-            }
+        if( $_POST['new_task'] === "" ) {
+            $message = "Please enter a task name to add!";
         } else {
-            exit("There was a problem with the prepare statement");
-        }
+             // Prepared statement
+            if( $stmt = $connection->prepare("INSERT INTO Task(TaskID, CategoryID, ActiveID, TaskName, DueDate, CompletedDate) VALUES (NULL, ?, 1, ?, ?, NULL)") ) {
+                if( $stmt->bind_param("iss", $_POST['category'], $_POST['new_task'], $_POST['due_date']) ) {
+                    if( $stmt->execute() ) {
+                        $message = "Task was added!";
+
+                        // Fetch content of todo lists (todo, overdue, completed, and soft-deleted)
+                        $todo_tasks = toDoTasks($connection);
+                        $overdue_tasks = overdueTasks($connection);
+                        $completed_tasks = completedTasks($connection);
+                        $soft_deleted_tasks = softDeletedTasks($connection);
+
+                    } else {
+                        exit("There was a problem with adding your new task...");
+                    } 
+                } else {
+                    exit("There was a problem with the bind_param");
+                }
+            } else {
+                exit("There was a problem with the prepare statement");
+            }
+        
+            $stmt->close();
+            }
        
-        $stmt->close();
     }
 
     else if(isset($_POST['soft_delete'])) {
@@ -151,7 +156,7 @@
 </head>
 <body>
     <h1>MySQLi + PHP To-Do List</h1>
-    <?php if($message) echo $message; ?>
+    <p class="message"><?php if($message) echo $message; ?></p>
     <section>
         <form action="#" method="POST" enctype="multipart/form-data">
         <h2>Add New Task</h2>

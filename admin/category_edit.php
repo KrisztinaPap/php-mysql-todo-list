@@ -114,7 +114,7 @@
                     <input type="text" name="new_category" id="new_category">
         
                     <input type="submit" name="add" value="Add" class="button">
-                    <?php if($message) echo $message; ?>
+                    <p class="message"><?php if($message) echo $message; ?></p>
                 </p>
         </form>
     </body>

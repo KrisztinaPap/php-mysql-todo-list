@@ -41,6 +41,7 @@ th, td {
     vertical-align: middle;
     padding: 8px;
     border-bottom: 1px solid #ddd;
+    white-space: nowrap;
 }
 
 a {
@@ -71,6 +72,9 @@ a {
     display: block;
 }
 
-
+.message {
+    color: #b22222;
+    font-weight: 700;
+}
 
     
