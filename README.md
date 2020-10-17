@@ -15,7 +15,7 @@ Unexpected Feature: User can hide/show the Completed and Deleted Tasks sections.
 
 ## Resources:
 - Tammy Valgardson: TECHCareers Lesson Notes from October 8-15, 2020
-- Lindsey Graham: Fantastic troubleshooting help with the JavaScript functions (hide/show task lists)
+- Lindsey Graham: Fantastic troubleshooting help with the JavaScript function hide/show task lists
 
 
 ## Trello Board:

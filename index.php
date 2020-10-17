@@ -156,7 +156,7 @@
 </head>
 <body>
     <h1>MySQLi + PHP To-Do List</h1>
-    <section>
+    <section>   
         <form action="#" method="POST" enctype="multipart/form-data">
         <h2>Add New Task</h2>
             <p>
