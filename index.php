@@ -142,11 +142,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MySQLi + PHP To-Do List</title>
 
-    <!-- Font Awesome icons -->
-    <link rel="stylesheet" href="all.min.css">
-
     <!-- Style(s) -->
-    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
     
     <!-- Script(s) -->
     <script type="text/JavaScript" src="js/scripts.js" defer></script>
@@ -189,16 +186,24 @@
             </table>
         </section>
         <section>
-            <h2>Completed</h2>
-            <table>
-                <?php echo $completed_tasks; ?>
-            </table>
+            
+            <button id="completed_btn">Show Completed Tasks</button>
+            <div id="completed_div" class="hidden">
+                <h2>Completed Tasks</h2>
+                <table>
+                    <?php echo $completed_tasks; ?>
+                </table>
+            </div>
         </section>
         <section>
-            <h2>Soft-deleted</h2>
-            <table>
-                <?php echo $soft_deleted_tasks; ?>
-            </table>
+            
+            <button id="deleted_btn">Show Deleted Tasks</button>
+            <div id="deleted_div" class="hidden">
+                <h2>Deleted Tasks (Soft-deleted)</h2>
+                <table>
+                    <?php echo $soft_deleted_tasks; ?>
+                </table>
+            </div>
         </section>
     </form>
     <?php
