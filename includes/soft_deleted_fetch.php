@@ -21,7 +21,7 @@ function softDeletedTasks($connection) {
                 <td>%s</td>
                 <td>%s</td>
                 <td>%s</td>
-                <td><button type="submit" name="hard_delete" value="%d">HARD DELETE</button></td>
+                <td><button type="submit" name="hard_delete" value="%d" class="button">HARD DELETE</button></td>
             </tr>
             ',
             $task['CategoryDescription'],

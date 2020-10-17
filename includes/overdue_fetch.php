@@ -21,9 +21,9 @@
                     <td>%s</td>
                     <td>%s</td>
                     <td>%s</td>
-                    <td><button type="submit" name="soft_delete" value="%d">DELETE</button></td>
-                    <td><button type="submit" name="complete" value="%d">Complete</button></td>
-                    <td><a href="admin/task_edit.php?task_id=%d">Edit</a></td>
+                    <td><button type="submit" name="soft_delete" value="%d" class="button">DELETE</button></td>
+                    <td><button type="submit" name="complete" value="%d" class="button">Complete</button></td>
+                    <td><a href="admin/task_edit.php?task_id=%d" class="button">Edit</a></td>
                 </tr>
                 ',
                 $task['CategoryDescription'],

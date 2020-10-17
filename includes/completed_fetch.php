@@ -22,8 +22,8 @@ function completedTasks($connection) {
                 <td>%s</td>
                 <td>%s</td>
                 <td>%s</td>
-                <td><button type="submit" name="soft_delete" value="%d">DELETE</button></td>
-                <td><button type="submit" name="unComplete" value="%d">Un-Complete</button></td>
+                <td><button type="submit" name="soft_delete" value="%d" class="button">DELETE</button></td>
+                <td><button type="submit" name="unComplete" value="%d" class="button">Reactivate</button></td>
             </tr>
             ',
             $task['CategoryDescription'],

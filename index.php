@@ -152,59 +152,79 @@
 <body>
     <h1>MySQLi + PHP To-Do List</h1>
     <?php if($message) echo $message; ?>
-    <form action="#" method="POST" enctype="multipart/form-data">
-    <h2>Add New Task</h2>
-        <p>
-            <label for="new_task">Task</label>
-            <input type="text" name="new_task" id="new_task">
-        </p>
-        <p>
-            <label for="due_date">Due date</label>
-            <input type="date" name="due_date" id="due_date">
-        </p>
-        <p>
-            <label for="category">Task category</label>
-            <select name="category" id="category">
-                <option value="">Choose one</option>
-                <?php echo $task_category_options; ?>
-            </select>
-            <a href="admin/category_edit.php">Edit Categories</a>
-        </p>
-        <p>
-            <input type="submit" name="add" value="Add New Task">
-        </p>
-        <section>
-            <h2>Things to do</h2>
-                <table>
-                    <?php echo $todo_tasks; ?>
-                </table>
-        </section>
-        <section>
-            <h2>Overdue</h2>
+    <section>
+        <form action="#" method="POST" enctype="multipart/form-data">
+        <h2>Add New Task</h2>
+            <p>
+                <label for="new_task">Task</label>
+                <input type="text" name="new_task" id="new_task">
+            </p>
+            <p>
+                <label for="due_date">Due date</label>
+                <input type="date" name="due_date" id="due_date">
+            </p>
+            <p>
+                <label for="category">Task category</label>
+                <select name="category" id="category">
+                    <option value="">Choose one</option>
+                    <?php echo $task_category_options; ?>
+                </select>
+                <a href="admin/category_edit.php" class="button">Edit Categories</a>
+            </p>
+            <p>
+                <input type="submit" name="add" value="Add New Task" class="button">
+            </p>
+    </section>
+    <section>
+        <h2>Things to do</h2>
             <table>
-                <?php echo $overdue_tasks; ?>
+                <tr>
+                    <th>Category</th>
+                    <th>Task</th>
+                    <th>Due Date</th>
+                </tr>
+                <?php echo $todo_tasks; ?>
             </table>
-        </section>
-        <section>
-            
-            <button id="completed_btn">Show Completed Tasks</button>
-            <div id="completed_div" class="hidden">
-                <h2>Completed Tasks</h2>
-                <table>
-                    <?php echo $completed_tasks; ?>
-                </table>
-            </div>
-        </section>
-        <section>
-            
-            <button id="deleted_btn">Show Deleted Tasks</button>
-            <div id="deleted_div" class="hidden">
-                <h2>Deleted Tasks (Soft-deleted)</h2>
-                <table>
-                    <?php echo $soft_deleted_tasks; ?>
-                </table>
-            </div>
-        </section>
+    </section>
+    <section>
+        <h2>Overdue</h2>
+        <table>
+            <tr>
+                <th>Category</th>
+                <th>Task</th>
+                <th>Due Date</th>
+            </tr>
+            <?php echo $overdue_tasks; ?>
+        </table>
+    </section>
+    <section>
+        <button id="completed_btn" class="button">Toggle Completed Tasks</button>
+        <div id="completed_div" class="hidden">
+            <h2>Completed Tasks</h2>
+            <table>
+                <tr>
+                    <th>Category</th>
+                    <th>Task</th>
+                    <th>Due Date</th>
+                </tr>
+                <?php echo $completed_tasks; ?>
+            </table>
+        </div>
+    </section>
+    <section>
+        <button id="deleted_btn" class="button">Toggle Deleted Tasks</button>
+        <div id="deleted_div" class="hidden">
+            <h2>Deleted Tasks (Soft-deleted)</h2>
+            <table>
+                <tr>
+                    <th>Category</th>
+                    <th>Task</th>
+                    <th>Due Date</th>
+                </tr>
+                <?php echo $soft_deleted_tasks; ?>
+            </table>
+        </div>
+    </section>
     </form>
     <?php
         include './templates/footer.php';

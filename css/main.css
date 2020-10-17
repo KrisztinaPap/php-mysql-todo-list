@@ -1,4 +1,65 @@
+html {
+    background-color: #bada55;
+}
 
+body {
+    min-height: 400px;
+    margin-bottom: 100px;
+    clear: both;
+ }
+
+section {
+    background-color: #eee;
+    margin: 8px;
+    border-radius: 16px;
+    border: 1px solid;
+    padding: 10px;
+    box-shadow: 5px 10px 18px #888888;
+}
+
+input, select {
+     padding: 4px;
+}
+footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    padding-top: 3rem;
+}
+
+table {
+    width: 95%;
+    max-width: 600px;
+    border-collapse: collapse;
+}
+
+th, td {
+    text-align: left;
+    vertical-align: middle;
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+}
+
+a {
+    text-decoration: none;
+    color: #000;
+}
+
+.button {
+    margin: 0 0.2rem;
+    border-radius: 6px;
+    border: 1px solid;
+    padding: 6px 10px;
+    box-shadow: 2px 6px 18px #888888;
+}
+
+.button:hover,
+.button:focus {
+    background-color: #000;
+    color: #ddd;
+}
 
 .hidden {
     display: none;
@@ -7,3 +68,7 @@
 .shown {
     display: block;
 }
+
+
+
+    
