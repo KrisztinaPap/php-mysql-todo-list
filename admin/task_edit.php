@@ -45,11 +45,8 @@
         if( $statement = $connection->prepare("UPDATE Task SET TaskName=?, DueDate=?, CategoryID=? WHERE TaskID=$task_id")) {
             if( $statement->bind_param("ssi", $_POST['task_name'], $_POST['due_date'], $_POST['category']) ) {
                 if( $statement->execute() ) {
-                   $message = "Update successful!";
-                   require_once('../includes/todo_fetch.php');
-                   require_once('../includes/overdue_fetch.php');
-                   require_once('../includes/completed_fetch.php');
-                   require_once('../includes/soft_deleted_fetch.php');
+                    $message = "Update successful!";
+                    $task_name = $_POST['task_name'];
                 } else {
                     exit("There was a problem with the execute");
                 }
