@@ -6,6 +6,7 @@ body {
     min-height: 400px;
     margin-bottom: 100px;
     clear: both;
+    margin-top: 16px;
  }
 
 section {
@@ -45,6 +46,7 @@ th, td {
 a {
     text-decoration: none;
     color: #000;
+    background-color: #eee;
 }
 
 .button {

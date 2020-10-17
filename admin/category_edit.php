@@ -22,7 +22,10 @@
         if( $task_category_results->num_rows > 0 ) {
             while( $category = $task_category_results->fetch_assoc() ) {
                 $task_categories .= sprintf('
-                <li>%s<button type="submit" name="hard_delete" value="%d">DELETE</button></li>
+                <tr>
+                    <td>%s</td>
+                    <td><button type="submit" name="hard_delete" value="%d" class="button">DELETE</button></td>
+                </tr>
                 ',
                 $category['CategoryDescription'],
                 $category['CategoryID']
@@ -84,22 +87,33 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Category Edit</title>
+
+        <!-- Style(s) -->
+        <link rel="stylesheet" type="text/css" href="../css/main.css" />
+        
+        <!-- Script(s) -->
+        <script type="text/JavaScript" src="../js/scripts.js" defer></script>
     </head>
     <body>
-        <a href="../index.php">Home</a>
+        <a href="../index.php" class="button">Home</a>
         <h1>Category Edit Screen</h1>
 
         <form action="#" method="POST" enctype="multipart/form-data">
 
             <h2>Existing Categories</h2>
+            <table>
+                <tr>
+                    <th>Category</th>
+                </tr>
                 <?php echo $task_categories; ?>
-
+            </table>
+                
             <h2>Add New</h2>
                 <p>
                     <label for="new_category">Category Name</label>
                     <input type="text" name="new_category" id="new_category">
         
-                    <input type="submit" name="add" value="Add">
+                    <input type="submit" name="add" value="Add" class="button">
                     <?php if($message) echo $message; ?>
                 </p>
         </form>
