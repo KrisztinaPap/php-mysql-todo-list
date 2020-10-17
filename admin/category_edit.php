@@ -1,6 +1,7 @@
 <?php
     require '../constants.php';
 
+    $message = null;
     $connection = new MySQLi(HOST, USER, PASSWORD, DATABASE);
 
     if( $connection->connect_errno) {
@@ -56,15 +57,23 @@
     else if(isset($_POST['hard_delete'])) {
 
         $category_id = $_POST['hard_delete'];
-        $sql_hard_delete = "DELETE FROM Category WHERE CategoryID=$category_id";
 
-        $hard_delete_result = $connection->query($sql_hard_delete);
+        // See if a task is using this category
+        $sql_category_in_use = "SELECT * FROM Category INNER JOIN Task USING(CategoryID) WHERE CategoryID=$category_id";
+        $category_in_use_result = $connection->query($sql_category_in_use);
 
-        if( !$hard_delete_result ) {
-            exit("Something went wrong with hard deleting your category");
+        if( $category_in_use_result->num_rows > 0 ) {
+            $message = "That category is in use! Please fix it and come back!";
         } else {
-            $task_categories = categoryFetch($connection);
-        }
+            $sql_hard_delete = "DELETE FROM Category WHERE CategoryID=$category_id";
+            $hard_delete_result = $connection->query($sql_hard_delete);
+    
+            if( !$hard_delete_result ) {
+                exit("Something went wrong with hard deleting your category");
+            } else {
+                $task_categories = categoryFetch($connection);
+            }
+        }       
     }
 ?>
 
@@ -91,6 +100,7 @@
                     <input type="text" name="new_category" id="new_category">
         
                     <input type="submit" name="add" value="Add">
+                    <?php if($message) echo $message; ?>
                 </p>
         </form>
     </body>

@@ -22,8 +22,8 @@ CREATE TABLE IF NOT EXISTS Category (
 -- Create a new Task Table
 CREATE TABLE IF NOT EXISTS Task (
     TaskID int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    CategoryID int(11) NOT NULL,
-    ActiveID int(11) NOT NULL,
+    CategoryID int(11) NULL,
+    ActiveID int(11) NOT NULL DEFAULT 1,
     TaskName varchar(30) NOT NULL,
     DueDate date NOT NULL,
     CompletedDate date NULL,
@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS Task (
 -- Insert Sample CategoryDescriptions
 INSERT INTO Category (CategoryID, CategoryDescription)
 VALUES
+(NULL, 'Uncategorized'),
 (NULL, 'Chores'),
 (NULL, 'Homework');
 
