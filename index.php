@@ -156,21 +156,20 @@
 </head>
 <body>
     <h1>MySQLi + PHP To-Do List</h1>
-    <p class="message"><?php if($message) echo $message; ?></p>
     <section>
         <form action="#" method="POST" enctype="multipart/form-data">
         <h2>Add New Task</h2>
             <p>
                 <label for="new_task">Task</label>
-                <input type="text" name="new_task" id="new_task">
+                <input type="text" name="new_task" id="new_task" required>
             </p>
             <p>
                 <label for="due_date">Due date</label>
-                <input type="date" name="due_date" id="due_date">
+                <input type="date" name="due_date" id="due_date" required>
             </p>
             <p>
                 <label for="category">Task category</label>
-                <select name="category" id="category">
+                <select name="category" id="category" required>
                     <option value="">Choose one</option>
                     <?php echo $task_category_options; ?>
                 </select>
@@ -178,6 +177,7 @@
             </p>
             <p>
                 <input type="submit" name="add" value="Add New Task" class="button">
+                <span class="message"><?php if($message) echo $message; ?></span>
             </p>
     </section>
     <section>

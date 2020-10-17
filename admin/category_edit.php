@@ -39,22 +39,26 @@
 
     if(isset($_POST['add'])) {
 
-        // Prepared statement
-        if( $stmt = $connection->prepare("INSERT INTO Category(CategoryID, CategoryDescription) VALUES (NULL, ?)") ) {
-            if( $stmt->bind_param("s", $_POST['new_category']) ) {
-                if( $stmt->execute() ) {
-                    $task_categories = categoryFetch($connection);
-                } else {
-                    exit("There was a problem with adding your new category...");
-                } 
-            } else {
-                exit("There was a problem with the bind_param");
-            }
+        if( $_POST['new_category'] === "" ) {
+            $message = "Please enter a category name to add!";
         } else {
-            exit("There was a problem with the prepare statement");
+            // Prepared statement
+            if( $stmt = $connection->prepare("INSERT INTO Category(CategoryID, CategoryDescription) VALUES (NULL, ?)") ) {
+                if( $stmt->bind_param("s", $_POST['new_category']) ) {
+                    if( $stmt->execute() ) {
+                        $task_categories = categoryFetch($connection);
+                    } else {
+                        exit("There was a problem with adding your new category...");
+                    } 
+                } else {
+                    exit("There was a problem with the bind_param");
+                }
+            } else {
+                exit("There was a problem with the prepare statement");
+            }
+        
+            $stmt->close();
         }
-       
-        $stmt->close();
     }
 
     else if(isset($_POST['hard_delete'])) {
@@ -91,8 +95,6 @@
         <!-- Style(s) -->
         <link rel="stylesheet" type="text/css" href="../css/main.css" />
         
-        <!-- Script(s) -->
-        <script type="text/JavaScript" src="../js/scripts.js" defer></script>
     </head>
     <body>
         <a href="../index.php" class="button">Home</a>

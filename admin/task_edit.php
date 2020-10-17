@@ -1,10 +1,11 @@
 <?php
     require '../constants.php';
     $task_id = $_GET['task_id'];
+    $message = null;
 
     // If we don't have a task id, do not continue
     if( !isset($_GET['task_id']) || $_GET['task_id'] === "" ) {
-        exit("You have reached this page by mistake");
+        exit("The page you are looking for doesn't exist!");
     }
 
     // If the task id is not an INT, do not continue
@@ -44,7 +45,7 @@
         if( $statement = $connection->prepare("UPDATE Task SET TaskName=?, DueDate=?, CategoryID=? WHERE TaskID=$task_id")) {
             if( $statement->bind_param("ssi", $_POST['task_name'], $_POST['due_date'], $_POST['category']) ) {
                 if( $statement->execute() ) {
-                   $message = "You have updated successfully";
+                   $message = "Update successful!";
                    require_once('../includes/todo_fetch.php');
                    require_once('../includes/overdue_fetch.php');
                    require_once('../includes/completed_fetch.php');
@@ -62,7 +63,6 @@
     }
 
 
-
     $connection->close();    
 ?>
 
@@ -76,33 +76,31 @@
     <!-- Style(s) -->
     <link rel="stylesheet" type="text/css" href="../css/main.css" />
     
-    <!-- Script(s) -->
-    <script type="text/JavaScript" src="../js/scripts.js" defer></script>
 </head>
 <body>
     <a href="../index.php" class="button">Home</a>
     <h1>Edit Task</h1>
-    <p class="message"><?php if($message) echo $message; ?></p>
     <form action="#" method="POST" enctype="multipart/form-data">
         <p>
             <label for="task_name">Task Name</label>
-            <input type="text" name="task_name" id="task_name" value="<?php echo $task_name; ?>">
+            <input type="text" name="task_name" id="task_name" value="<?php echo $task_name; ?>" required>
         </p>
         <p>
             <label for="due_date">Due Date</label>
-            <input type="date" name="due_date" id="due_date" value="<?php echo $due_date; ?>">
+            <input type="date" name="due_date" id="due_date" value="<?php echo $due_date; ?>" required>
         </p>
         <p>
             <label for="category">Current Task Category: <strong><?php echo $task_category; ?></strong></label>
         </p>
         <p>
-            <select name="category" id="category" value="">
+            <select name="category" id="category" value="" required>
                 <option value="">Choose another</option>
                 <?php echo $task_category_options; ?>
             </select>
         </p>
         <p>
             <input type="submit" value="Update" class="button">
+            <span class="message"><?php if($message) echo $message; ?></span>
         </p>
     </form>
 </body>
