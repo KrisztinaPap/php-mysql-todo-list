@@ -72,9 +72,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Task</title>
+
+    <!-- Style(s) -->
+    <link rel="stylesheet" type="text/css" href="../css/main.css" />
+    
+    <!-- Script(s) -->
+    <script type="text/JavaScript" src="../js/scripts.js" defer></script>
 </head>
 <body>
-    <a href="../index.php">Home</a>
+    <a href="../index.php" class="button">Home</a>
     <h1>Edit Task</h1>
     <form action="#" method="POST" enctype="multipart/form-data">
         <p>
@@ -86,7 +92,7 @@
             <input type="date" name="due_date" id="due_date" value="<?php echo $due_date; ?>">
         </p>
         <p>
-            <label for="category">Current Task Category: <?php echo $task_category; ?></label>
+            <label for="category">Current Task Category: <strong><?php echo $task_category; ?></strong></label>
         </p>
         <p>
             <select name="category" id="category" value="">
@@ -95,7 +101,7 @@
             </select>
         </p>
         <p>
-            <input type="submit" value="Update">
+            <input type="submit" value="Update" class="button">
         </p>
     </form>
 </body>
