@@ -82,6 +82,8 @@
             }
         }       
     }
+
+    $connection->close();
 ?>
 
 

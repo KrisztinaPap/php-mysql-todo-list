@@ -1,12 +1,7 @@
 <?php
     require 'constants.php';
 
-    // Variables for the 3 different task lists (todo(active), overdue, and completed)
     $message = null;
-
-    // // SQL for inserting new task
-    // $sql_insert_new_task = "INSERT INTO Task (TaskID, CategoryID, ActiveID, TaskName, DueDate, CompletedDate)
-    // VALUES (NULL, 2, 1, 'Math homework', '1900-01-01', NULL)";
 
     $connection = new MySQLi(HOST, USER, PASSWORD, DATABASE);
 
@@ -14,29 +9,27 @@
         die('Connection failed: '.$connection->connect_error);
     }
 
-    require_once('includes/category_dropdown.php');
-
+    // Fetch content for todo lists (todo, overdue, completed, and soft-deleted) and category dropdown (select)
     require_once('includes/todo_fetch.php');
     require_once('includes/overdue_fetch.php');
     require_once('includes/completed_fetch.php');
     require_once('includes/soft_deleted_fetch.php');
+    require_once('includes/category_dropdown.php');
 
-    // Fetch category options for the dropdown
-    $task_category_options = categoryDropdown($connection);
-
-    // Fetch content of todo lists (todo, overdue, completed, and soft-deleted)
     $todo_tasks = toDoTasks($connection);
     $overdue_tasks = overdueTasks($connection);
     $completed_tasks = completedTasks($connection);
     $soft_deleted_tasks = softDeletedTasks($connection);
+    $task_category_options = categoryDropdown($connection);
 
-
+    // If the form is submitted with the add button
     if(isset($_POST['add'])) {
 
+        // Only add new task if user input is not empty string
         if( $_POST['new_task'] === "" ) {
             $message = "Please enter a task name to add!";
         } else {
-             // Prepared statement
+            // Prepared statement
             if( $stmt = $connection->prepare("INSERT INTO Task(TaskID, CategoryID, ActiveID, TaskName, DueDate, CompletedDate) VALUES (NULL, ?, 1, ?, ?, NULL)") ) {
                 if( $stmt->bind_param("iss", $_POST['category'], $_POST['new_task'], $_POST['due_date']) ) {
                     if( $stmt->execute() ) {
@@ -47,7 +40,6 @@
                         $overdue_tasks = overdueTasks($connection);
                         $completed_tasks = completedTasks($connection);
                         $soft_deleted_tasks = softDeletedTasks($connection);
-
                     } else {
                         exit("There was a problem with adding your new task...");
                     } 
@@ -57,17 +49,14 @@
             } else {
                 exit("There was a problem with the prepare statement");
             }
-        
             $stmt->close();
-            }
-       
+        }
     }
-
+    // If the form is submitted with a delete button, do a soft-delete
     else if(isset($_POST['soft_delete'])) {
 
         $task_id = $_POST['soft_delete'];
         $sql_soft_delete = "UPDATE Task SET ActiveID=2 WHERE TaskID=$task_id";
-
         $soft_delete_result = $connection->query($sql_soft_delete);
 
         if( !$soft_delete_result ) {
@@ -82,11 +71,11 @@
         }
     }
 
+    // If the form is submitted with a completed button, update CompletedDate to current date
     else if(isset($_POST['complete'])) {
 
         $task_id = $_POST['complete'];
         $sql_complete = "UPDATE Task SET CompletedDate=NOW() WHERE TaskID=$task_id";
-
         $complete_result = $connection->query($sql_complete);
 
         if( !$complete_result ) {
@@ -101,11 +90,11 @@
         }
     }
 
+    // If the form is submitted with a reactivate button, un-complete it (reverse of complete)
     else if(isset($_POST['unComplete'])) {
 
         $task_id = $_POST['unComplete'];
         $sql_unComplete = "UPDATE Task SET CompletedDate=NULL WHERE TaskID=$task_id";
-
         $unComplete_result = $connection->query($sql_unComplete);
 
         if( !$unComplete_result ) {
@@ -119,11 +108,11 @@
         }
     }
 
+    // If the form is submitted with a hard delete button, actually delete row from database
     else if(isset($_POST['hard_delete'])) {
 
         $task_id = $_POST['hard_delete'];
         $sql_hard_delete = "DELETE FROM Task WHERE TaskID=$task_id";
-
         $hard_delete_result = $connection->query($sql_hard_delete);
 
         if( !$hard_delete_result ) {
@@ -136,7 +125,6 @@
             $soft_deleted_tasks = softDeletedTasks($connection);
         }
     }
-
     $connection->close();
 ?>
 
@@ -152,7 +140,6 @@
     
     <!-- Script(s) -->
     <script type="text/JavaScript" src="js/scripts.js" defer></script>
-
 </head>
 <body>
     <h1>MySQLi + PHP To-Do List</h1>
@@ -161,15 +148,15 @@
         <h2>Add New Task</h2>
             <p>
                 <label for="new_task">Task</label>
-                <input type="text" name="new_task" id="new_task" required>
+                <input type="text" name="new_task" id="new_task">
             </p>
             <p>
                 <label for="due_date">Due date</label>
-                <input type="date" name="due_date" id="due_date" required>
+                <input type="date" name="due_date" id="due_date">
             </p>
             <p>
                 <label for="category">Task category</label>
-                <select name="category" id="category" required>
+                <select name="category" id="category">
                     <option value="">Choose one</option>
                     <?php echo $task_category_options; ?>
                 </select>

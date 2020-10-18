@@ -1,9 +1,9 @@
-<footer>
-    <p>
-        &copy;
-        <?php echo date( 'Y' ); ?>
-        Krisztina Pap
-    </p>
-</footer>
-</body>
+        <footer>
+            <p>
+                &copy;
+                <?php echo date( 'Y' ); ?>
+                Krisztina Pap
+            </p>
+        </footer>
+    </body>
 </html>
